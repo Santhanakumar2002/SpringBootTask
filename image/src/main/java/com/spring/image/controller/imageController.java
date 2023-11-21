@@ -1,11 +1,16 @@
 package com.spring.image.controller;
-
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.util.UUID;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,20 +24,18 @@ import org.springframework.web.multipart.MultipartFile;
 import com.spring.image.entity.ImageEntity;
 import com.spring.image.service.ImageService;
 
-
-
 @RestController
-@RequestMapping("/api/image")
+@RequestMapping(value = "/image")
 public class imageController {
 	
 	@Autowired
-	ImageService imageService; 
+	public ImageService imageService;
 	
-	@PostMapping(value = "/upload")
-	 public ResponseEntity<String> uploadImage(@RequestParam("name") String name, @RequestParam("file") MultipartFile file,@RequestParam("status") String status) {
+	 @PostMapping("/upload")
+	 public ResponseEntity<String> uploadImage(@RequestParam("name") String name, @RequestParam("file") MultipartFile file,@RequestParam("status") String status,@RequestParam("date") String date) {
 	        try {
-	        	ImageEntity imageEntity = new ImageEntity();// i creating a object for entity 
-	            imageEntity.setName(name);// i set a name by using entity..
+	            ImageEntity imageEntity = new ImageEntity();
+	            imageEntity.setName(name);
 	            imageEntity.setImage(file.getBytes());
 	            imageEntity.setStatus(status);
 	            LocalDate dateobj = LocalDate.now();
@@ -43,18 +46,45 @@ public class imageController {
 	            return ResponseEntity.badRequest().body("Image upload failed");
 	        }
 	    }
-	
-	 @GetMapping(value = "/get/{id}")
-	    public ResponseEntity<byte[]> downloadImage(@PathVariable UUID id) {
-	    	ImageEntity imageObj = imageService.getImageById(id);
-	        if (imageObj != null) {
-	            return ResponseEntity.ok()
-	                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + imageObj.getName())
-	                    .contentType(MediaType.ALL)
-	                   .body(imageObj.getImage());
-	        } else {
-	            return ResponseEntity.notFound().build();
-	        }
-}
+	 
+	 @GetMapping("/{id}")
+	    public ResponseEntity<?> downloadImage(@PathVariable UUID id) throws Exception {
+	    	 
+			
+	    	try {
 
+				ImageEntity imageObj = imageService.getImageById(id);
+				imageObj.getId();
+				byte[] data = imageObj.getImage();
+				InputStream inputStream = new ByteArrayInputStream(data);
+				String fileNameText = imageObj.getName();
+				String fileName = URLEncoder.encode(fileNameText, "UTF-8").replaceAll("\\+", "%20");
+				String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
+				if ("png".equals(fileExtension)){
+	            return ResponseEntity.ok().header("Access-Control-Expose-Headers", "Content-Disposition")
+	                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + imageObj.getName() +".png\"" )
+	                  
+	                    .contentType(MediaType.IMAGE_PNG)
+	                    
+	                    .body(new InputStreamResource(inputStream));
+	            
+	        }
+				else if ("jpeg".equals(fileExtension)){
+	            return ResponseEntity.ok().header("Access-Control-Expose-Headers", "Content-Disposition")
+	                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + imageObj.getName() +".jpeg\"" )
+	                    .contentType(MediaType.IMAGE_JPEG)
+	                   .body(new InputStreamResource(inputStream));
+	            
+	        }else if ("pdf".equals(fileExtension)){
+	            return ResponseEntity.ok().header("Access-Control-Expose-Headers", "Content-Disposition")
+	                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + imageObj.getName() +".pdf\"" )
+	                    .contentType(MediaType.APPLICATION_PDF)
+	                    .body(new InputStreamResource(inputStream));
+	        } else {
+	        	return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("Unsupported file type");
+	        }
+} catch (Exception e) {
+	e.printStackTrace();
+	return (ResponseEntity<?>) ResponseEntity.badRequest();
 }
+}}
