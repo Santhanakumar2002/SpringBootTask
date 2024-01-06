@@ -1,0 +1,151 @@
+ <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en"
+ xmlns:th="http://www.thymeleaf.org"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<head>
+    <meta charset="UTF-8"/> 
+ 
+   <title>Ebrain Technology</title>
+
+	<style>
+		body {
+			width:100%;
+			margin: 0px auto;
+			padding: 0;
+			overflow: hidden;
+			align-items: center;
+			justify-content: center;
+		}
+		table,
+		td,
+		th {
+
+			text-align: left;
+			border: 1px solid black;
+			border-collapse: collapse;
+			margin-left: auto;
+			margin-right: auto;
+			padding: 10px;
+			margin: 0px auto;
+
+
+		}
+
+		th {
+			background-color: #4CAF50;
+		}
+		
+@media print{
+	@page {
+			size: A4;
+			
+			
+		}
+}
+		
+
+		.header {
+			/*position: fixed;*/
+			text-align: center;
+			padding: 1px;
+			background-color: #4CAF50;
+			color: black;
+			/*top:0;
+			left:0;*/
+			
+			
+		}
+        
+       
+		.footer {
+			
+			margin-top: 20px;
+			text-align: center;
+			padding: 0.1px;
+			background-color: #4CAF50;
+			color: black; 
+			
+			
+			
+
+		}
+		.parl{
+			width:50%; 
+			float:left;
+		}
+		.parr{
+			width:50%; 
+			float:right;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="header">
+		<header>
+			<h1>Ebrain Company Employee Details</h1>
+		</header>
+	</div>
+	
+	    
+        <div class="parl">
+			<div align="center">
+            <h2>ABOUT US</h2>
+            </div>
+            <p>Ebrain was started in 2016 build solutions for SME’s.<br/>
+         Over the last 6 years we have worked various clients and delivered solutions across the domains.<br/>
+          We have created the strong relationship with our client which helps us to grow YoY.<br/>
+         As a company we nurtured lot of raw talents. We democratised technology exposure to sub urban cities.<br/>
+          We seriously pursue the agenda of “Build from local for the global”.
+            </p>
+        </div>
+        
+        <div class="parr">
+			<div align="center">
+            <h2>Our Mission</h2>
+			</div>
+            <p>“To provide clients high quality, practical and cost-effective IT Solutions to <br/>
+                manage and catalyze their operations by first understanding their business and its requirements.<br/>
+                 work with them to develop a solution that works best for them and their business. <br/>
+                "We work hard every day to make Ebrain Technologies the India's most respected service brand."</p>
+            </div>
+
+
+	<div align="center ">
+		<h3>Employee Information</h3>
+	</div>
+	<div align="center">
+		<table>
+			<tr>
+
+				<th><b>Name</b></th>
+				<th><b>DOB</b></th>
+				<th><b>Email</b></th>
+				<th><b>Phone</b></th>
+
+			</tr>
+			<tr th:each="pdfEntity: ${userList}">
+				<td th:text="${pdfEntity.name}"></td>
+				<td th:text="${pdfEntity.dob}"></td>
+				<td th:text="${pdfEntity.email}"></td>
+				<td th:text="${pdfEntity.phone}"></td>
+
+			</tr>
+		</table>
+	</div>
+	<div class="footer">
+		<footer>
+			  <p>Company Name:Ebrain Technology<br/>
+           Address :15, Second Floor, Karups Nagar,Trichy Main Road,Thanjavur, Tamil Nadu 613005 <br/>
+            <a href="tel:099440 07339">Phone No:99440 07339</a> <br/>
+        <a href="mailto:ebraintechnology@gmail.com">(ebraintechnology@gmail.com)</a>
+        </p>
+			</footer>
+	</div>
+	
+</body>
+
+</html> 
+
+
+
